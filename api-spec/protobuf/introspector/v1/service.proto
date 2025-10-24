@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package introspector.v1;
+
+import "meshapi/gateway/annotations.proto";
+
+service IntrospectorService {
+  rpc GetInfo(GetInfoRequest) returns (GetInfoResponse) {
+    option (meshapi.gateway.http) = {
+      get: "/v1/info"
+    };
+  }
+
+  rpc SubmitTx(SubmitTxRequest) returns (SubmitTxResponse) {
+    option (meshapi.gateway.http) = {
+      post: "/v1/tx/submit"
+      body: "*"
+    };
+  }
+}
+
+message GetInfoRequest {}
+message GetInfoResponse {
+  string version = 1;
+  string signer_pubkey = 2;
+}
+
+message SubmitTxRequest {
+  string ark_tx = 1;
+  repeated string checkpoint_txs = 2;
+}
+message SubmitTxResponse {
+  string signed_ark_tx = 1;
+  repeated string signed_checkpoint_txs = 2;
+}

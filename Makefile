@@ -1,0 +1,35 @@
+.PHONY: build build-all clean cov docker-run docker-stop droppg droppgtest help integrationtest lint migrate pg pgsqlc pgtest pgmigrate psql proto proto-lint run run-light run-signer run-wallet run-wallet-nosigner run-simulation run-simulation-and-setup run-large-simulation run-simulation-exact-batch run-simulation-min-batch run-simulation-custom sqlc test vet
+
+define setup_env
+    $(eval include $(1))
+    $(eval export)
+endef
+
+proto: proto-lint
+	@echo "Compiling stubs..."
+	@docker run --rm --volume "$(shell pwd):/workspace" --workdir /workspace buf generate
+
+# proto-lint: lints protos
+proto-lint:
+	@echo "Linting protos..."
+	@docker build -q -t buf -f buf.Dockerfile . &> /dev/null
+	@docker run --rm --volume "$(shell pwd):/workspace" --workdir /workspace buf lint
+
+run:
+	@echo "Running introspector..."
+	$(call setup_env, envs/introspector.dev.env)
+	@go run cmd/introspector.go
+
+integrationtest:
+	@echo "Running integration test..."
+	@go test ./test/e2e_test.go
+
+# docker-run: starts docker test environment
+docker-run:
+	@echo "Running dockerized arkd and arkd wallet in test mode on regtest..."
+	@docker compose -f docker-compose.regtest.yml up --build -d
+
+# docker-stop: tears down docker test environment
+docker-stop:
+	@echo "Stopping dockerized arkd and arkd wallet in test mode on regtest..."
+	@docker compose -f docker-compose.regtest.yml down -v
