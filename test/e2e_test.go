@@ -43,6 +43,7 @@ import (
 	"github.com/btcsuite/btcwallet/waddrmgr"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func TestMain(m *testing.M) {
@@ -127,7 +128,7 @@ func TestSendToArkadeScriptClosure(t *testing.T) {
 	require.NoError(t, err)
 
 	// create the client
-	conn, err := grpc.NewClient("localhost:7073", grpc.WithInsecure())
+	conn, err := grpc.NewClient("localhost:7073", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	require.NoError(t, err)
 	introspectorClient := introspectorclient.NewGRPCClient(conn)
 

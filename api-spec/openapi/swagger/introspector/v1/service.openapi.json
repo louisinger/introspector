@@ -5,6 +5,46 @@
     "version": "version not set"
   },
   "paths": {
+    "/v1/finalization": {
+      "post": {
+        "tags": [
+          "IntrospectorService"
+        ],
+        "operationId": "IntrospectorService_SubmitFinalization",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitFinalizationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "a successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitFinalizationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/info": {
       "get": {
         "tags": [
@@ -35,7 +75,47 @@
         }
       }
     },
-    "/v1/tx/submit": {
+    "/v1/intent": {
+      "post": {
+        "tags": [
+          "IntrospectorService"
+        ],
+        "operationId": "IntrospectorService_SubmitIntent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitIntentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "a successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubmitIntentResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tx": {
       "post": {
         "tags": [
           "IntrospectorService"
@@ -104,6 +184,18 @@
           }
         }
       },
+      "Intent": {
+        "title": "Intent",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "proof": {
+            "type": "string"
+          }
+        }
+      },
       "Status": {
         "title": "Status",
         "type": "object",
@@ -119,6 +211,69 @@
             }
           },
           "message": {
+            "type": "string"
+          }
+        }
+      },
+      "SubmitFinalizationRequest": {
+        "title": "SubmitFinalizationRequest",
+        "type": "object",
+        "properties": {
+          "commitmentTx": {
+            "type": "string"
+          },
+          "connectorTree": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TxTreeNode"
+            }
+          },
+          "forfeits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "signedIntent": {
+            "$ref": "#/components/schemas/Intent"
+          },
+          "vtxoTree": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TxTreeNode"
+            }
+          }
+        }
+      },
+      "SubmitFinalizationResponse": {
+        "title": "SubmitFinalizationResponse",
+        "type": "object",
+        "properties": {
+          "signedCommitmentTx": {
+            "type": "string"
+          },
+          "signedForfeits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SubmitIntentRequest": {
+        "title": "SubmitIntentRequest",
+        "type": "object",
+        "properties": {
+          "intent": {
+            "$ref": "#/components/schemas/Intent"
+          }
+        }
+      },
+      "SubmitIntentResponse": {
+        "title": "SubmitIntentResponse",
+        "type": "object",
+        "properties": {
+          "signedProof": {
             "type": "string"
           }
         }
@@ -150,6 +305,24 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "TxTreeNode": {
+        "title": "TxTreeNode",
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "tx": {
+            "type": "string"
+          },
+          "txid": {
+            "type": "string"
           }
         }
       }

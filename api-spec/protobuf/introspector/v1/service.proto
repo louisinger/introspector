@@ -13,7 +13,21 @@ service IntrospectorService {
 
   rpc SubmitTx(SubmitTxRequest) returns (SubmitTxResponse) {
     option (meshapi.gateway.http) = {
-      post: "/v1/tx/submit"
+      post: "/v1/tx"
+      body: "*"
+    };
+  }
+
+  rpc SubmitIntent(SubmitIntentRequest) returns (SubmitIntentResponse) {
+    option (meshapi.gateway.http) = {
+      post: "/v1/intent"
+      body: "*"
+    };
+  }
+
+  rpc SubmitFinalization(SubmitFinalizationRequest) returns (SubmitFinalizationResponse) {
+    option (meshapi.gateway.http) = {
+      post: "/v1/finalization"
       body: "*"
     };
   }
@@ -32,4 +46,34 @@ message SubmitTxRequest {
 message SubmitTxResponse {
   string signed_ark_tx = 1;
   repeated string signed_checkpoint_txs = 2;
+}
+
+message SubmitIntentRequest {
+  Intent intent = 1;
+}
+message SubmitIntentResponse {
+  string signed_proof = 1;
+}
+
+message SubmitFinalizationRequest {
+  Intent signed_intent = 1;
+  repeated string forfeits = 2;
+  repeated TxTreeNode connector_tree = 3;
+  repeated TxTreeNode vtxo_tree = 4;
+  string commitment_tx = 5;
+}
+message SubmitFinalizationResponse {
+  repeated string signed_forfeits = 1;
+  string signed_commitment_tx = 2;
+}
+
+message TxTreeNode {
+  string txid = 1;
+  string tx = 2;
+  map<uint32, string> children = 3;
+}
+
+message Intent {
+  string proof = 1;
+  string message = 2;
 }
