@@ -198,7 +198,7 @@ func (h *handler) SubmitFinalization(
 	}
 
 	resp := &introspectorv1.SubmitFinalizationResponse{
-		SignedForfeits:     encodedForfeits,
+		SignedForfeits: encodedForfeits,
 	}
 
 	if signedBatchFinalization.CommitmentTx != nil {

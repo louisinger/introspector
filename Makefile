@@ -1,4 +1,4 @@
-.PHONY: build docker-run docker-stop integrationtest run proto proto-lint
+.PHONY: build docker-run docker-stop format integrationtest run proto proto-lint
 
 define setup_env
     $(eval include $(1))
@@ -42,4 +42,4 @@ lint:
 	golangci-lint run --fix
 
 format:
-	gofmt -w .
+	@go fmt ./...

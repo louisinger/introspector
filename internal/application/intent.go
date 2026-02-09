@@ -31,7 +31,7 @@ func (s *service) SubmitIntent(ctx context.Context, intent Intent) (*psbt.Packet
 			// in intent proof, input index 0 is the message input
 			// the signature script equals to the input 1 script
 			// so we can skip it and handle it later if input index 1 is an arkade script
-			continue 
+			continue
 		}
 
 		script, err := readArkadeScript(ptx, inputIndex, signerPublicKey)
