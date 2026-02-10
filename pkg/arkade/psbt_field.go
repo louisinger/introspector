@@ -11,10 +11,12 @@ import (
 var (
 	ArkadeScript        = []byte("arkadescript")
 	ArkadeScriptWitness = []byte("arkadescriptwitness")
+	AssetPacket         = []byte("assetpacket")
 )
 
 var ArkadeScriptField txutils.ArkPsbtFieldCoder[[]byte] = &arkadeScriptField{}
 var ArkadeScriptWitnessField txutils.ArkPsbtFieldCoder[wire.TxWitness] = &arkadeScriptWitnessField{}
+var AssetPacketField txutils.ArkPsbtFieldCoder[[]byte] = &assetPacketField{}
 
 type arkadeScriptField struct{}
 
@@ -64,6 +66,23 @@ func (c arkadeScriptWitnessField) Decode(unknown *psbt.Unknown) (*wire.TxWitness
 
 func makeArkPsbtKey(keyData []byte) []byte {
 	return append([]byte{txutils.ArkPsbtFieldKeyType}, keyData...)
+}
+
+type assetPacketField struct{}
+
+func (f *assetPacketField) Encode(data []byte) (*psbt.Unknown, error) {
+	return &psbt.Unknown{
+		Key:   makeArkPsbtKey(AssetPacket),
+		Value: data,
+	}, nil
+}
+
+func (f *assetPacketField) Decode(unknownField *psbt.Unknown) (*[]byte, error) {
+	if !containsArkPsbtKey(unknownField, AssetPacket) {
+		return nil, nil
+	}
+
+	return &unknownField.Value, nil
 }
 
 func containsArkPsbtKey(unknownField *psbt.Unknown, keyFieldName []byte) bool {
