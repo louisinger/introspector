@@ -256,17 +256,11 @@ func TestOffchainTxWithAsset(t *testing.T) {
 	err = txutils.SetArkPsbtField(validTx, 0, arkade.ArkadeScriptField, arkadeScript)
 	require.NoError(t, err)
 
-	// Add the asset packet to the transaction
+	// Add the asset packet to the transaction as an OP_RETURN output
 	assetPacketOut, err := assetPacket.TxOut()
 	require.NoError(t, err)
 	validTx.UnsignedTx.AddTxOut(assetPacketOut)
 	validTx.Outputs = append(validTx.Outputs, psbt.POutput{})
-
-	// Set the asset packet field in the PSBT
-	assetPacketBytes, err := assetPacket.Serialize()
-	require.NoError(t, err)
-	err = txutils.SetArkPsbtField(validTx, 0, arkade.AssetPacketField, assetPacketBytes[2:]) // skip OP_RETURN and data push
-	require.NoError(t, err)
 
 	encodedValidTx, err := validTx.B64Encode()
 	require.NoError(t, err)
