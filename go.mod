@@ -14,7 +14,7 @@ require (
 	github.com/ArkLabsHQ/introspector/api-spec v0.0.0-00010101000000-000000000000
 	github.com/ArkLabsHQ/introspector/pkg/arkade v0.0.0-00010101000000-000000000000
 	github.com/ArkLabsHQ/introspector/pkg/client v0.0.0-00010101000000-000000000000
-	github.com/arkade-os/arkd/pkg/ark-lib v0.8.1-0.20260102141947-c66f85422174
+	github.com/arkade-os/arkd/pkg/ark-lib v0.0.0-20260210000000-6bc3c9709d36
 	github.com/arkade-os/arkd/pkg/errors v0.0.0-20251020193908-f401a905e83f
 	github.com/arkade-os/arkd/pkg/macaroons v0.7.0
 	github.com/arkade-os/go-sdk v0.8.2-0.20260121113217-12e71e4566e6
