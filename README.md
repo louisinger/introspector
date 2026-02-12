@@ -298,13 +298,3 @@ These opcodes provide access to the Arkade Asset V1 packet embedded in the trans
 | OP_INSPECTINASSETAT | 241 | 0xf1 | i t | txid32 gidx_u16 amount_u64 | Returns t-th asset declared for input i. |
 | OP_INSPECTINASSETLOOKUP | 242 | 0xf2 | i txid32 gidx_u16 | amount_u64 or -1 | Returns declared amount for asset at input i, or -1 if not found. |
 
-#### Intent-Specific (Not Yet Implemented)
-
-Reserved opcodes for future intent-specific introspection:
-
-| Word | Opcode | Hex | Input | Output | Description |
-|------|--------|-----|-------|--------|-------------|
-| OP_INSPECTGROUPINTENTOUTCOUNT | 243 | 0xf3 | k | n | Returns number of INTENT outputs in group k. |
-| OP_INSPECTGROUPINTENTOUT | 244 | 0xf4 | k j | output_index_u32 amount_u64 | Returns j-th INTENT output in group k. |
-| OP_INSPECTGROUPINTENTINCOUNT | 245 | 0xf5 | k | n | Returns number of INTENT inputs in group k. |
-| OP_INSPECTGROUPINTENTIN | 246 | 0xf6 | k j | txid_32 output_index_u32 amount_u64 | Returns j-th INTENT input in group k. |
