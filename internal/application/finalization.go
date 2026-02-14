@@ -173,11 +173,6 @@ func hasLeaf(tree *tree.TxTree, outpoint wire.OutPoint) bool {
 		return false
 	}
 
-	flatTree, err := tree.Serialize()
-	if err != nil {
-		return false
-	}
-
 	node := tree.Find(outpoint.Hash.String())
 	if node == nil {
 		return false
