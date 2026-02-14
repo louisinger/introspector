@@ -25,10 +25,10 @@ func (s *service) SubmitFinalization(ctx context.Context, finalization BatchFina
 	}
 
 	if len(signedInputs) == 0 {
-		return nil, fmt.Errorf("no signed inputs found")
+		return nil, fmt.Errorf("no signed inputs found in intent proof")
 	}
 
-	signedForfeits := make([]*psbt.Packet, 0)
+	signedForfeits := make([]*psbt.Packet, 0, len(finalization.Forfeits))
 
 	for _, forfeit := range finalization.Forfeits {
 		if len(forfeit.Inputs) != 2 {
@@ -170,34 +170,21 @@ func getSignedInputs(ptx psbt.Packet, signerPublicKey *btcec.PublicKey) (map[wir
 
 func hasLeaf(tree *tree.TxTree, outpoint wire.OutPoint) bool {
 	if tree == nil {
-		fmt.Println("tree is nil")
 		return false
-	}
-
-	flatTree, err := tree.Serialize()
-	if err != nil {
-		return false
-	}
-	leaves := flatTree.Leaves()
-	for _, leaf := range leaves {
-		fmt.Println("leaf", leaf.Txid)
 	}
 
 	node := tree.Find(outpoint.Hash.String())
 	if node == nil {
-		fmt.Println("node is nil")
 		return false
 	}
 
 	if len(node.Children) != 0 {
 		// not a leaf
-		fmt.Println("not a leaf")
 		return false
 	}
 
 	if len(node.Root.UnsignedTx.TxOut) <= int(outpoint.Index) {
 		// index out of range
-		fmt.Println("index out of range")
 		return false
 	}
 
