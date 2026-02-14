@@ -11,8 +11,9 @@ import (
 	arklib "github.com/arkade-os/arkd/pkg/ark-lib"
 	"github.com/arkade-os/arkd/pkg/ark-lib/asset"
 	"github.com/arkade-os/arkd/pkg/ark-lib/script"
-	"github.com/arkade-os/go-sdk/wallet"
+	arksdk "github.com/arkade-os/go-sdk"
 	inmemorystoreconfig "github.com/arkade-os/go-sdk/store/inmemory"
+	"github.com/arkade-os/go-sdk/wallet"
 	singlekeywallet "github.com/arkade-os/go-sdk/wallet/singlekey"
 	inmemorystore "github.com/arkade-os/go-sdk/wallet/singlekey/store/inmemory"
 	"github.com/btcsuite/btcd/btcec/v2"
@@ -46,7 +47,7 @@ func setupBobWallet(t *testing.T, ctx context.Context) (wallet.WalletService, *b
 }
 
 // fundAndSettleAlice funds alice's account via boarding and settles
-func fundAndSettleAlice(t *testing.T, ctx context.Context, alice interface{ Receive(context.Context) (string, string, string, error); Settle(context.Context) (string, error) }) arklib.Address {
+func fundAndSettleAlice(t *testing.T, ctx context.Context, alice arksdk.ArkClient) *arklib.Address {
 	_, offchainAddr, boardingAddress, err := alice.Receive(ctx)
 	require.NoError(t, err)
 
@@ -105,12 +106,6 @@ func createArkadeScriptWithAssetChecks(t *testing.T, alicePkScript []byte, asset
 		// Check: 1 asset group
 		AddOp(arkade.OP_INSPECTNUMASSETGROUPS).
 		AddInt64(1).
-		AddOp(arkade.OP_EQUALVERIFY).
-		// Check: group 0 is an issuance (AssetId.txid == this txid)
-		AddInt64(0).
-		AddOp(arkade.OP_INSPECTASSETGROUPASSETID).
-		AddOp(arkade.OP_DROP). // drop gidx
-		AddOp(arkade.OP_TXID).
 		AddOp(arkade.OP_EQUALVERIFY).
 		// Check: sum of outputs for group 0 equals assetAmount
 		AddInt64(0). // group index

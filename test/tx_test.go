@@ -297,7 +297,7 @@ func TestSettlement(t *testing.T) {
 	alice, grpcClient := setupArkSDK(t)
 	defer grpcClient.Close()
 
-	bobWallet, bobPrivKey, bobPubKey := setupBobWallet(t, ctx)
+	bobWallet, _, bobPubKey := setupBobWallet(t, ctx)
 	aliceAddr := fundAndSettleAlice(t, ctx, alice)
 
 	const sendAmount = 10000

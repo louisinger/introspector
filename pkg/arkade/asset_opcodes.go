@@ -78,10 +78,19 @@ func opcodeInspectAssetGroupCtrl(op *opcode, data []byte, vm *Engine) error {
 	}
 
 	if group.ControlAsset.Type == asset.AssetRefByGroup {
+		if group.ControlAsset.GroupIndex >= uint16(len(vm.assetPacket)) {
+			return scriptError(txscript.ErrInvalidStackOperation, "control asset group index out of range")
+		}
 		ctrlGroup := vm.assetPacket[group.ControlAsset.GroupIndex]
-		txHash := vm.tx.TxHash()
-		vm.dstack.PushByteArray(txHash[:])
-		vm.dstack.PushInt(scriptNum(ctrlGroup.AssetId.Index))
+		if ctrlGroup.AssetId == nil {
+			// Referenced group is a fresh issuance, use current tx hash and the group index
+			txHash := vm.tx.TxHash()
+			vm.dstack.PushByteArray(txHash[:])
+			vm.dstack.PushInt(scriptNum(group.ControlAsset.GroupIndex))
+		} else {
+			vm.dstack.PushByteArray(ctrlGroup.AssetId.Txid[:])
+			vm.dstack.PushInt(scriptNum(ctrlGroup.AssetId.Index))
+		}
 		return nil
 	}
 
@@ -149,7 +158,10 @@ func opcodeInspectAssetGroupMetadataHash(op *opcode, data []byte, vm *Engine) er
 
 	group := vm.assetPacket[int(k)]
 
-	hash := computeMetadataMerkleRoot(group.Metadata)
+	hash, err := computeMetadataMerkleRoot(group.Metadata)
+	if err != nil {
+		return scriptError(txscript.ErrInvalidStackOperation, "failed to compute metadata hash: "+err.Error())
+	}
 	vm.dstack.PushByteArray(hash[:])
 	return nil
 }
@@ -291,7 +303,6 @@ func opcodeInspectAssetGroupSum(op *opcode, data []byte, vm *Engine) error {
 			return scriptError(txscript.ErrInvalidStackOperation, "amount overflow")
 		}
 		vm.dstack.PushInt(scriptNum(inSum.Uint64()))
-		
 		outSum := safeSumOutputs(group.Outputs)
 		if !outSum.IsUint64() {
 			return scriptError(txscript.ErrInvalidStackOperation, "amount overflow")
@@ -578,14 +589,17 @@ func opcodeInspectInAssetLookup(op *opcode, data []byte, vm *Engine) error {
 }
 
 // computeMetadataMerkleRoot computes the Merkle root hash of the given metadata slice.
-func computeMetadataMerkleRoot(metadata []asset.Metadata) chainhash.Hash {
+func computeMetadataMerkleRoot(metadata []asset.Metadata) (chainhash.Hash, error) {
 	if len(metadata) == 0 {
-		return chainhash.Hash{}
+		return chainhash.Hash{}, nil
 	}
 
 	hashes := make([]chainhash.Hash, len(metadata))
 	for i, md := range metadata {
-		serialized, _ := md.Serialize()
+		serialized, err := md.Serialize()
+		if err != nil {
+			return chainhash.Hash{}, err
+		}
 		hashes[i] = sha256.Sum256(serialized)
 	}
 
@@ -593,8 +607,10 @@ func computeMetadataMerkleRoot(metadata []asset.Metadata) chainhash.Hash {
 		var nextLevel []chainhash.Hash
 		for i := 0; i < len(hashes); i += 2 {
 			if i+1 < len(hashes) {
-				combined := append(hashes[i][:], hashes[i+1][:]...)
-				hash := sha256.Sum256(combined)
+				var combined [64]byte
+				copy(combined[:32], hashes[i][:])
+				copy(combined[32:], hashes[i+1][:])
+				hash := sha256.Sum256(combined[:])
 				nextLevel = append(nextLevel, hash)
 			} else {
 				nextLevel = append(nextLevel, hashes[i])
@@ -603,7 +619,7 @@ func computeMetadataMerkleRoot(metadata []asset.Metadata) chainhash.Hash {
 		hashes = nextLevel
 	}
 
-	return hashes[0]
+	return hashes[0], nil
 }
 
 // safeSumInputs computes the total amount across all inputs using big.Int to avoid overflow.
