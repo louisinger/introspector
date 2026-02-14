@@ -48,7 +48,10 @@ func TestOffchainTxWithAsset(t *testing.T) {
 	assetPacket := createAssetPacket(t, 0, assetAmount)
 	arkadeScript := createArkadeScriptWithAssetChecks(t, alicePkScript, assetAmount)
 	introspectorClient, publicKey, conn := setupIntrospectorClient(t, ctx)
-	defer conn.Close()
+	t.Cleanup(func() {
+		//nolint:errcheck
+		conn.Close()
+	})
 
 	vtxoScript := createVtxoScriptWithArkade(bobPubKey, aliceAddr.Signer, publicKey, arkade.ArkadeScriptHash(arkadeScript))
 
@@ -227,7 +230,10 @@ func TestSettlementWithAsset(t *testing.T) {
 
 	arkadeScript := createArkadeScriptWithAssetChecks(t, alicePkScript, assetAmount)
 	introspectorClient, publicKey, conn := setupIntrospectorClient(t, ctx)
-	defer conn.Close()
+	t.Cleanup(func() {
+		//nolint:errcheck
+		conn.Close()
+	})
 
 	vtxoScript := createVtxoScriptWithArkadeAndCSV(bobPubKey, aliceAddr.Signer, publicKey, arkade.ArkadeScriptHash(arkadeScript))
 

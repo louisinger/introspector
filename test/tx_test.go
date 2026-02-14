@@ -96,7 +96,10 @@ func TestOffchain(t *testing.T) {
 
 	// create the client
 	introspectorClient, publicKey, conn := setupIntrospectorClient(t, ctx)
-	defer conn.Close()
+	t.Cleanup(func() {
+		//nolint:errcheck
+		conn.Close()
+	})
 
 	vtxoScript := createVtxoScriptWithArkade(bobPubKey, aliceAddr.Signer, publicKey, arkade.ArkadeScriptHash(arkadeScript))
 
@@ -318,7 +321,10 @@ func TestSettlement(t *testing.T) {
 
 	// create the client
 	introspectorClient, publicKey, conn := setupIntrospectorClient(t, ctx)
-	defer conn.Close()
+	t.Cleanup(func() {
+		//nolint:errcheck
+		conn.Close()
+	})
 
 	vtxoScript := createVtxoScriptWithArkadeAndCSV(bobPubKey, aliceAddr.Signer, publicKey, arkade.ArkadeScriptHash(arkadeScript))
 
