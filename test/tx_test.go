@@ -644,7 +644,6 @@ func TestBoarding(t *testing.T) {
 	}
 	require.NotNil(t, contractOutput)
 
-
 	// create the intent
 
 	randomKey, err := btcec.NewPrivateKey()

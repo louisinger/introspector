@@ -70,8 +70,8 @@ func fundAndSettleAlice(t *testing.T, ctx context.Context, alice arksdk.ArkClien
 // createAssetPacket creates a simple asset issuance packet with one output
 func createAssetPacket(t *testing.T, vout uint16, amount uint64) asset.Packet {
 	assetGroup, err := asset.NewAssetGroup(
-		nil, // nil AssetId means issuance (will use current tx hash)
-		nil, // no control asset
+		nil,                  // nil AssetId means issuance (will use current tx hash)
+		nil,                  // no control asset
 		[]asset.AssetInput{}, // no inputs (issuance)
 		[]asset.AssetOutput{
 			{
