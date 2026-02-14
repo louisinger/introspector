@@ -92,7 +92,6 @@ func createAssetPacket(t *testing.T, vout uint16, amount uint64) asset.Packet {
 // createArkadeScriptWithAssetChecks creates an arkade script that verifies:
 // - Output goes to specified address
 // - Exactly 1 asset group
-// - Asset is an issuance
 // - Asset output sum equals expected amount
 func createArkadeScriptWithAssetChecks(t *testing.T, alicePkScript []byte, assetAmount int64) []byte {
 	arkadeScript, err := txscript.NewScriptBuilder().
