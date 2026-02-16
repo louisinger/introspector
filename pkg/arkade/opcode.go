@@ -304,7 +304,7 @@ const (
 	OP_INSPECTINASSETCOUNT         = 0xf0 // 240
 	OP_INSPECTINASSETAT            = 0xf1 // 241
 	OP_INSPECTINASSETLOOKUP        = 0xf2 // 242
-	OP_UNKNOWN243           = 0xf3 // 243
+	OP_TXID                 = 0xf3 // 243
 	OP_UNKNOWN244           = 0xf4 // 244
 	OP_UNKNOWN245           = 0xf5 // 245
 	OP_UNKNOWN246           = 0xf6 // 246
@@ -605,7 +605,7 @@ var opcodeArray = [256]opcode{
 	OP_INSPECTINASSETCOUNT:         {OP_INSPECTINASSETCOUNT, "OP_INSPECTINASSETCOUNT", 1, opcodeInspectInAssetCount},
 	OP_INSPECTINASSETAT:            {OP_INSPECTINASSETAT, "OP_INSPECTINASSETAT", 1, opcodeInspectInAssetAt},
 	OP_INSPECTINASSETLOOKUP:        {OP_INSPECTINASSETLOOKUP, "OP_INSPECTINASSETLOOKUP", 1, opcodeInspectInAssetLookup},
-	OP_UNKNOWN243:           {OP_UNKNOWN243, "OP_UNKNOWN243", 1, opcodeInvalid},
+	OP_TXID:                 {OP_TXID, "OP_TXID", 1, opcodeTxid},
 	OP_UNKNOWN244:           {OP_UNKNOWN244, "OP_UNKNOWN244", 1, opcodeInvalid},
 	OP_UNKNOWN245:           {OP_UNKNOWN245, "OP_UNKNOWN245", 1, opcodeInvalid},
 	OP_UNKNOWN246:           {OP_UNKNOWN246, "OP_UNKNOWN246", 1, opcodeInvalid},
@@ -2613,6 +2613,14 @@ func opcodeTxWeight(op *opcode, data []byte, vm *Engine) error {
 	weight := make([]byte, 4)
 	binary.LittleEndian.PutUint32(weight, uint32(vm.tx.SerializeSizeStripped()*4))
 	vm.dstack.PushByteArray(weight)
+	return nil
+}
+
+// opcodeTxid pushes the transaction hash (txid) onto the stack.
+// Stack transformation: [...] -> [... txid]
+func opcodeTxid(op *opcode, data []byte, vm *Engine) error {
+	txHash := vm.tx.TxHash()
+	vm.dstack.PushByteArray(txHash[:])
 	return nil
 }
 

@@ -117,6 +117,10 @@ func TestOpcodeDisasm(t *testing.T) {
 			}
 
 		// Asset introspection opcodes (0xe5-0xf2).
+
+		// OP_TXID (0xf3).
+		case opcodeVal == 0xf3:
+			expectedStr = opcodeArray[opcodeVal].name
 		case opcodeVal >= 0xe5 && opcodeVal <= 0xf2:
 			expectedStr = opcodeArray[opcodeVal].name
 
@@ -125,7 +129,7 @@ func TestOpcodeDisasm(t *testing.T) {
 			(opcodeVal == 0xc8) || // Unknown between input inspection ops
 			(opcodeVal == 0xce) || // Unknown between input and output ops
 			(opcodeVal == 0xd0) || // Unknown between output ops
-			(opcodeVal >= 0xf3 && opcodeVal <= 0xf9) || // Unknown range after new ops
+			(opcodeVal >= 0xf4 && opcodeVal <= 0xf9) || // Unknown range after new ops
 			opcodeVal == 0xfc:
 			expectedStr = "OP_UNKNOWN" + strconv.Itoa(opcodeVal)
 		}
@@ -193,6 +197,10 @@ func TestOpcodeDisasm(t *testing.T) {
 			}
 
 		// Asset introspection opcodes (0xe5-0xf2).
+
+		// OP_TXID (0xf3).
+		case opcodeVal == 0xf3:
+			expectedStr = opcodeArray[opcodeVal].name
 		case opcodeVal >= 0xe5 && opcodeVal <= 0xf2:
 			expectedStr = opcodeArray[opcodeVal].name
 
@@ -201,7 +209,7 @@ func TestOpcodeDisasm(t *testing.T) {
 			(opcodeVal == 0xc8) || // Unknown between input inspection ops
 			(opcodeVal == 0xce) || // Unknown between input and output ops
 			(opcodeVal == 0xd0) || // Unknown between output ops
-			(opcodeVal >= 0xf3 && opcodeVal <= 0xf9) || // Unknown range after new ops
+			(opcodeVal >= 0xf4 && opcodeVal <= 0xf9) || // Unknown range after new ops
 			opcodeVal == 0xfc:
 			expectedStr = "OP_UNKNOWN" + strconv.Itoa(opcodeVal)
 		}
